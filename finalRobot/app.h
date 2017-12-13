@@ -65,6 +65,10 @@ extern bool already_seen_color(colorid_t c);
 extern void examinate_lake();
 extern void get_values(char buffer[16]);
 extern void avoid_obsticles();
+extern void avoid_lakes();
+extern void back_task(intptr_t unused);
+extern void after_examinating_all_lakes();
+extern bool color_found(colorid_t clr);
 /**
  * Tasks
  */

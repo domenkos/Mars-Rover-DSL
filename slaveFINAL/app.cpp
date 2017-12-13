@@ -58,12 +58,18 @@ void main_task(intptr_t unused) {
 			break;
 		read_sensors(1);
 		send_values();
+		dly_tsk(100);
 	}
 }
 
 void bt_task(intptr_t unused)
 {
-
+	while(true)
+	{
+		read_sensors(1);
+		send_values();
+		dly_tsk(500);
+	}
 }
 
 void btConnect() {

@@ -53,7 +53,7 @@ colorid_t *seen_lakes;
 int bumper_code = 0;
 
 
-uint8_t slave_address[6] = { 0x00, 0x17, 0xE9, 0xB4, 0xCE, 0xE6 };
+uint8_t slave_address[6] = { 0x00, 0x17, 0xE9, 0xB4, 0x9B, 0x9A };
 const char* pin = "0000";
 static FILE *bt_con;
 bool_t is_master = true;
@@ -70,16 +70,20 @@ void main_task(intptr_t unused) {
 		if (do_exit)
 			break;
 		read_sensors(1);
-		sleep(100);
+		dly_tsk(100);
+		//sleep(100);
 		missions();
 	}
+    ev3_motor_stop(LEFT_P,true);
+    ev3_motor_stop(RIGHT_P,true);
 }
 
 void missions()
 {
 	stay_on_board();
 	avoid_obsticles();
-	//detect_lakes();
+	//avoid_lakes();
+	detect_lakes();
 }
 
 
@@ -87,8 +91,9 @@ void bt_task(intptr_t unused)
 {
 	static char buf[16];
 	while (fgets(buf, 16, bt_con)) {
-
 		get_values(buf);
+		//cycle_print(buf);
+
 		/*
 		if(strcmp(buf, "1\n") == 0)
 
@@ -99,13 +104,29 @@ void bt_task(intptr_t unused)
 			ev3_led_set_color(LED_OFF);
 			*/
 		//cycle_print(buf);
-		dly_tsk(500);
+		dly_tsk(100);
+	}
+}
+
+void back_task(intptr_t unused){
+	while(true)
+	{
+	/*
+		char xx[20];
+		sprintf(xx, "Razdalja: %d\n", ultrasonic_back);
+		cycle_print(xx);
+*/
+		if(ultrasonic_back > 20)
+		{
+			ev3_led_set_color(LED_RED);
+			moving(DRIVE_SPEED, DRIVE_SPEED);
+		}
 	}
 }
 
 void get_values(char buffer[16])
 {
-	//buffer = "3;44;3";
+	//buffer = "3;44;3;";
 	char *p = buffer;
 	char *pom = (char*) malloc(sizeof(char) * 16);
 	int read_values[3];
@@ -122,7 +143,7 @@ void get_values(char buffer[16])
 		read_values[i] = x;
 
 		sprintf(pom,"%d --> %d\n", i,x);
-		cycle_print(pom);
+		//cycle_print(pom);
 
 		free(pom);
 		pom = (char * ) malloc(sizeof(char) * 16);
@@ -160,6 +181,7 @@ void btConnect() {
     }
     cycle_print((char*)"Connected.");
     act_tsk(BT_TASK);
+    act_tsk(BACK_TASK);
 }
 
 bool_t isConnected() {
@@ -183,7 +205,7 @@ void init() {
 //	Motor init
 	ev3_motor_config(LEFT_P, LARGE_MOTOR);
 	ev3_motor_config(RIGHT_P, LARGE_MOTOR);
-	ev3_motor_config(SMALL_ARM, UNREGULATED_MOTOR);
+	ev3_motor_config(SMALL_ARM, MEDIUM_MOTOR);
 //	Sensor init
 	ev3_sensor_config(COLOR_R, COLOR_SENSOR);
 	ev3_sensor_config(COLOR_L, COLOR_SENSOR);
@@ -236,13 +258,16 @@ void moving(uint32_t speed_left, uint32_t speed_right)
 
 void turn(bool direction, uint32_t speed)
 {
+	moving(-(speed/ 2), -(speed / 2));
+	//sleep(500);
+	dly_tsk(1000);
 	if(direction) // turn right
 	{
-		moving(-(speed / 2), -speed);
+		moving((speed), -(speed / 2));
 	}
 	else
 	{
-		moving(-speed, -(speed / 2));
+		moving(-(speed / 2), (speed));
 	}
 	sleep(500);
 	moving(DRIVE_SPEED, DRIVE_SPEED);
@@ -272,18 +297,24 @@ void stay_on_board()
 {
 	colorid_t l = color_sensor_left();
 	colorid_t r = color_sensor_right();
+	if(l == COLOR_WHITE && r == COLOR_WHITE)
+	{
+		moving(-(DRIVE_SPEED / 2), -(DRIVE_SPEED / 2));
+		dly_tsk(1000);
+		moving(2 * DRIVE_SPEED,-(2 * DRIVE_SPEED));
+		dly_tsk(500);
+		moving(DRIVE_SPEED, DRIVE_SPEED);
+	}
+
 	if(l == COLOR_WHITE)
 	{
-		turn(true,SPECIAL_SPEED);
+		turn(true,DRIVE_SPEED);
 	}
 	if(r == COLOR_WHITE)
 	{
-		turn(false, SPECIAL_SPEED);
+		turn(false, DRIVE_SPEED);
 	}
-	if(ultrasonic_back > 3)
-	{
-		moving(DRIVE_SPEED, DRIVE_SPEED);
-	}
+
 
 }
 
@@ -313,7 +344,7 @@ bool random_turn_direction()
 void detect_lakes()
 {
 	colorid_t detected_color = color_mid; //dobiva iz druzga bricka
-	if(detected_color == COLOR_RED || detected_color == COLOR_BLUE || detected_color == COLOR_YELLOW) // in dsl
+	if(color_found(detected_color))
 	{
 		if(already_seen_color(detected_color))
 		{
@@ -324,6 +355,38 @@ void detect_lakes()
 			seen_lakes[added_lakes++] = detected_color;
 			// pomoc ga v jezero za DSL definicijo sekund
 			examinate_lake();
+			if(added_lakes == NUM_OF_LAKES)
+				after_examinating_all_lakes();
+		}
+	}
+	if(color_found(color_left))
+	{
+		if(already_seen_color(color_left))
+			turn(true, DRIVE_SPEED);
+		else
+		{
+
+			ev3_motor_set_power(LEFT_P, -20);
+			ev3_motor_set_power(RIGHT_P, -10);
+			dly_tsk(500);
+			ev3_motor_set_power(LEFT_P, 10);
+			ev3_motor_set_power(RIGHT_P, 10);
+			dly_tsk(500);
+		}
+
+	}
+	if(color_found(color_right))
+	{
+		if(already_seen_color(color_right))
+			turn(false, DRIVE_SPEED);
+		else
+		{
+			ev3_motor_set_power(LEFT_P, -10);
+			ev3_motor_set_power(RIGHT_P, -20);
+			dly_tsk(500);
+			ev3_motor_set_power(LEFT_P, 10);
+			ev3_motor_set_power(RIGHT_P, 10);
+			dly_tsk(500);
 		}
 	}
 }
@@ -341,14 +404,19 @@ bool already_seen_color(colorid_t c)
 
 void examinate_lake()
 {
+	//poskavanga z palcko
+	moving(-DRIVE_SPEED, -DRIVE_SPEED);
+	dly_tsk(350);
 	ev3_motor_stop(LEFT_P, true);
 	ev3_motor_stop(RIGHT_P, true);
-	//poskavanga z palcko
+
 	//magija
-	ev3_motor_set_power(SMALL_ARM, DRIVE_SPEED / 2 );
-	sleep(2000);
-	ev3_motor_stop(SMALL_ARM, true);
-	sleep(5000);
+	ev3_motor_set_power(SMALL_ARM, -5);
+	dly_tsk(2000);
+	ev3_motor_stop(SMALL_ARM,true);
+	dly_tsk(3000);
+	ev3_motor_set_power(SMALL_ARM, 5);
+	dly_tsk(2000);
 	//konec magije
 	turn(random_turn_direction(), DRIVE_SPEED);
 }
@@ -360,4 +428,23 @@ void avoid_obsticles()
 	{
 		turn(random_turn_direction(), DRIVE_SPEED);
 	}
+}
+
+void avoid_lakes()
+{
+	colorid_t detected_color = color_mid;
+	if(color_found(detected_color))
+	{
+		turn(random_turn_direction(),DRIVE_SPEED);
+	}
+}
+void after_examinating_all_lakes()
+{
+	ev3_led_set_color(LED_ORANGE);
+	do_exit = true;
+}
+
+bool color_found(colorid_t clr)
+{
+	return clr == COLOR_RED || clr == COLOR_BLUE || clr == COLOR_GREEN;
 }
