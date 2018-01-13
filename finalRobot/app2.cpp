@@ -6,8 +6,8 @@ int32_t FONT_WIDTH, FONT_HEIGHT, NLINES;
 
 // Speed settings
 uint32_t
-	DRIVE_SPEED = 20 ,
-	SPECIAL_SPEED = 10;
+	DRIVE_SPEED = 30,
+	SPECIAL_SPEED = 15;
 
 /**
  * Brick 1 sensor and motor maping
@@ -46,36 +46,30 @@ int16_t
 	ultrasonic_front = 40;
 
 const int NUM_OF_LAKES = 3;
-
-const int ULTRASONIC_FRONT_DISTANCE = 25;
-const int ULTRASONIC_FRONT_DISTANCE_ROCKS = 12;
-const int NUMBER_OF_ROCKS = 2;
-
-
+const int ULTRASONIC_FRONT_DISTANCE = 40;
 int added_lakes = 0;
-int examined_rocks = 0;
-
 colorid_t *seen_lakes;
 
 int bumper_code = 0;
 
 
-uint8_t slave_address[6] = { 0x00, 0x17, 0xE9, 0xB4, 0xCE, 0xE6 };
+uint8_t slave_address[6] = { 0x00, 0x17, 0xE9, 0xB4, 0x9B, 0x9A };
 const char* pin = "0000";
 static FILE *bt_con;
 bool_t is_master = true;
 
 int line = 0;
 
+
+
 void main_task(intptr_t unused) {
 	init();
-    //read_sensors(1);
+    read_sensors(1);
     moving(DRIVE_SPEED, DRIVE_SPEED);
-    act_tsk(STAY_TASK);
-    //act_tsk(BACK_TASK);
     while(true) {
 		if (do_exit)
 			break;
+		read_sensors(1);
 		dly_tsk(100);
 		//sleep(100);
 		missions();
@@ -84,28 +78,22 @@ void main_task(intptr_t unused) {
     ev3_motor_stop(RIGHT_P,true);
 }
 
+/*
+void push_task(intptr_t unused)
+{
+	push_light_objects();
+}
+*/
 void missions()
 {
-	avoid_lakes();
-	push_obstacles();
-	//avoid_obstacles();
-	//detect_rocks();
-	//detect_lakes();
+	stay_on_board();
+	avoid_obsticles();
+	//avoid_lakes();
+	detect_lakes();
+	//find_rock();
+	//push_light_objects();
 }
 
-void stay_on_task(intptr_t unused)
-{
-	while(true)
-	{
-		if(ultrasonic_back > 10)
-		{
-			ev3_led_set_color(LED_RED);
-			moving(DRIVE_SPEED, DRIVE_SPEED);
-			dly_tsk(500);
-		}
-		stay_on_board();
-	}
-}
 
 void bt_task(intptr_t unused)
 {
@@ -113,13 +101,10 @@ void bt_task(intptr_t unused)
 	while (fgets(buf, 16, bt_con)) {
 		get_values(buf);
 		//cycle_print(buf);
-		read_sensors(1);
-		/*
-		char pom[20];
-		sprintf(pom,"distance front %d\n", ultrasonic_front);
-		cycle_print(pom);
 
+		/*
 		if(strcmp(buf, "1\n") == 0)
+
 			ev3_led_set_color(LED_GREEN);
 		else if (strcmp(buf,"0\n") == 0)
 			ev3_led_set_color(LED_RED);
@@ -131,21 +116,33 @@ void bt_task(intptr_t unused)
 	}
 }
 
-void back_ultra_task(intptr_t unused){
-	cycle_print((char *) "v tasku sm");
-	char pom[20];
-	while(true)
+bool checking_ultra_back()
+{
+	if(ultrasonic_back > 20)
 	{
-		sprintf(pom,"distance back %d\n", ultrasonic_back);
-		cycle_print(pom);
-		if(ultrasonic_back > 10)
-		{
-			ev3_led_set_color(LED_RED);
-			moving(DRIVE_SPEED, DRIVE_SPEED);
-		}
+		ev3_led_set_color(LED_RED);
+		ev3_motor_stop(LEFT_P, true);
+		ev3_motor_stop(RIGHT_P, true);
+		ev3_led_set_color(LED_ORANGE);
+		dly_tsk(2000);
+		moving(DRIVE_SPEED, DRIVE_SPEED);
+		return true;
 	}
+	ev3_led_set_color(LED_OFF);
+	return false;
 }
 
+void back_task(intptr_t unused){
+	while(true)
+	{
+	/*
+		char xx[20];
+		sprintf(xx, "Razdalja: %d\n", ultrasonic_back);
+		cycle_print(xx);
+*/
+		checking_ultra_back();
+	}
+}
 
 void get_values(char buffer[16])
 {
@@ -204,7 +201,8 @@ void btConnect() {
     }
     cycle_print((char*)"Connected.");
     act_tsk(BT_TASK);
-    //act_tsk(BACK_TASK);
+    act_tsk(BACK_TASK);
+    //act_tsk(PUSH_TASK);
 }
 
 bool_t isConnected() {
@@ -281,6 +279,7 @@ void moving(uint32_t speed_left, uint32_t speed_right)
 
 void turn(bool direction, uint32_t speed)
 {
+
 	moving(-(speed/ 2), -(speed / 2));
 	//sleep(500);
 	dly_tsk(1000);
@@ -292,8 +291,7 @@ void turn(bool direction, uint32_t speed)
 	{
 		moving(-(speed / 2), (speed));
 	}
-	//sleep(500);
-	dly_tsk(500);
+	sleep(500);
 	moving(DRIVE_SPEED, DRIVE_SPEED);
 }
 
@@ -323,6 +321,7 @@ void stay_on_board()
 	colorid_t r = color_sensor_right();
 	if(l == COLOR_WHITE && r == COLOR_WHITE)
 	{
+
 		moving(-(DRIVE_SPEED / 2), -(DRIVE_SPEED / 2));
 		dly_tsk(1000);
 		moving(2 * DRIVE_SPEED,-(2 * DRIVE_SPEED));
@@ -346,9 +345,9 @@ void bumper_detection(int num)
 {
 	switch(num)
 	{
-	case 0: ev3_led_set_color(LED_OFF); break;
-	case 1: turn(true, SPECIAL_SPEED); ev3_led_set_color(LED_ORANGE); break;
-	case 2: turn(false, SPECIAL_SPEED); ev3_led_set_color(LED_RED); break;
+	case 0: break;
+	case 1: turn(true, SPECIAL_SPEED); break;
+	case 2: turn(false, SPECIAL_SPEED); break;
 	case 3: turn(random_turn_direction(), SPECIAL_SPEED); break;
 	default: break;
 
@@ -357,8 +356,11 @@ void bumper_detection(int num)
 
 bool random_turn_direction()
 {
-
-	return (color_left + color_mid + color_right + (ultrasonic_front - 1) * 2) % 2 == 0;
+	/*
+	srand(time(NULL));
+	int r = rand() % 2;
+	*/
+	return true;
 
 }
 
@@ -370,7 +372,6 @@ void detect_lakes()
 		if(already_seen_color(detected_color))
 		{
 			turn(random_turn_direction(),SPECIAL_SPEED);
-			return;
 		}
 		else
 		{
@@ -379,43 +380,28 @@ void detect_lakes()
 			examinate_lake();
 			if(added_lakes == NUM_OF_LAKES)
 				after_examinating_all_lakes();
-			return;
 		}
-	}
-	else if(color_found_avoid(detected_color)){
-		turn(random_turn_direction(),SPECIAL_SPEED);
-		return;
 	}
 	if(color_found(color_left))
 	{
 		if(already_seen_color(color_left))
-		{
 			turn(true, DRIVE_SPEED);
-			return;
-		}
 		else
 		{
+
 			ev3_motor_set_power(LEFT_P, -20);
 			ev3_motor_set_power(RIGHT_P, -10);
 			dly_tsk(500);
 			ev3_motor_set_power(LEFT_P, 10);
 			ev3_motor_set_power(RIGHT_P, 10);
 			dly_tsk(500);
-			return;
 		}
 
-	}
-	else if(color_found_avoid(color_left)){
-		turn(false, DRIVE_SPEED);
-		return;
 	}
 	if(color_found(color_right))
 	{
 		if(already_seen_color(color_right))
-		{
 			turn(false, DRIVE_SPEED);
-			return;
-		}
 		else
 		{
 			ev3_motor_set_power(LEFT_P, -10);
@@ -424,13 +410,6 @@ void detect_lakes()
 			ev3_motor_set_power(LEFT_P, 10);
 			ev3_motor_set_power(RIGHT_P, 10);
 			dly_tsk(500);
-			return;
-		}
-	}
-	else if(color_found_avoid(color_right)){
-		{
-			turn(true, DRIVE_SPEED);
-			return;
 		}
 	}
 }
@@ -455,26 +434,79 @@ void examinate_lake()
 	ev3_motor_stop(RIGHT_P, true);
 
 	//magija
-	ev3_motor_set_power(SMALL_ARM, -8);
-	dly_tsk(1500);
+	ev3_motor_set_power(SMALL_ARM, -5);
+	dly_tsk(2000);
 	ev3_motor_stop(SMALL_ARM,true);
-	dly_tsk(1200);
-	ev3_motor_set_power(SMALL_ARM, 8);
-	dly_tsk(1500);
+	dly_tsk(3000);
+	ev3_motor_set_power(SMALL_ARM, 5);
+	dly_tsk(2000);
 	//konec magije
 	turn(random_turn_direction(), DRIVE_SPEED);
 }
 
-void avoid_obstacles()
+void find_rock()
+{
+	if(ultrasonic_front < 15 && ultrasonic_front > 5)
+	{
+		examinate_rock();
+	}
+	else if(touch_left || touch_right || ultrasonic_front <= 5)
+	{
+		moving(-DRIVE_SPEED/2, -DRIVE_SPEED/2);
+		dly_tsk(500);
+		turn(random_turn_direction(),DRIVE_SPEED);
+	}
+	return;
+	if(touch_right)
+	{
+		ev3_motor_set_power(LEFT_P, -10);
+		ev3_motor_set_power(RIGHT_P, -20);
+		dly_tsk(500);
+		ev3_motor_set_power(LEFT_P, 10);
+		ev3_motor_set_power(RIGHT_P, 10);
+		dly_tsk(500);
+		examinate_rock();
+	}
+	else if(touch_left)
+	{
+		ev3_motor_set_power(LEFT_P, -20);
+		ev3_motor_set_power(RIGHT_P, -10);
+		dly_tsk(500);
+		ev3_motor_set_power(LEFT_P, 10);
+		ev3_motor_set_power(RIGHT_P, 10);
+		dly_tsk(500);
+		examinate_rock();
+	}
+	/*
+	if(ultrasonic_front > 6 && ultrasonic_front < 10)
+	{
+
+	}
+	else if(ultrasonic_front <= 6)
+	{
+		turn(random_turn_direction(), DRIVE_SPEED);
+	}
+	*/
+}
+
+void examinate_rock()
+{
+	ev3_motor_stop(LEFT_P,true);
+	ev3_motor_stop(RIGHT_P,true);
+
+	ev3_motor_set_power(SMALL_ARM, -2);
+	dly_tsk(1000);
+	ev3_motor_stop(SMALL_ARM,true);
+	dly_tsk(3000);
+	ev3_motor_set_power(SMALL_ARM, 2);
+	dly_tsk(1000);
+	turn(random_turn_direction(), DRIVE_SPEED);
+}
+void avoid_obsticles()
 {
 	bumper_detection(bumper_code);
 	if(ultrasonic_front < ULTRASONIC_FRONT_DISTANCE)
 	{
-
-		char pom[20];
-		sprintf(pom,"distance front %d\n", ultrasonic_front);
-		cycle_print(pom);
-
 		turn(random_turn_direction(), DRIVE_SPEED);
 	}
 }
@@ -482,82 +514,51 @@ void avoid_obstacles()
 void avoid_lakes()
 {
 	colorid_t detected_color = color_mid;
-	if(color_found_avoid(detected_color))
+	if(color_found(detected_color))
 	{
 		turn(random_turn_direction(),DRIVE_SPEED);
 	}
-	else if(color_found_avoid(color_left))
-	{
-		turn(true, DRIVE_SPEED);
-	}
-	else if(color_found_avoid(color_right))
-	{
-		turn(false, DRIVE_SPEED);
-	}
 }
-
 void after_examinating_all_lakes()
 {
+	ev3_led_set_color(LED_ORANGE);
 	do_exit = true;
-	ev3_speaker_play_tone(2000,2000);
-}
-		
-bool color_found(colorid_t color)
-{
-	return color == COLOR_GREEN || color == COLOR_BLUE || color == COLOR_RED;
 }
 
-bool color_found_avoid(colorid_t color)
+bool color_found(colorid_t clr)
 {
-	return color == COLOR_GREEN || color == COLOR_BLUE || color == COLOR_RED;
+	return clr == COLOR_RED || clr == COLOR_BLUE || clr == COLOR_GREEN;
 }
 
-void push_obstacles(){
-	if (ultrasonic_front < 7 && ultrasonic_front != 0) {
-		int i = 0;
-		moving(DRIVE_SPEED, DRIVE_SPEED);
-		do{
-			ev3_led_set_color(i++ % 2 == 0 ? LED_GREEN  : LED_ORANGE);
-			dly_tsk(100);
-		} while(color_left != COLOR_WHITE && color_right != COLOR_WHITE && color_mid != COLOR_WHITE);
-	}
-	ev3_led_set_color(LED_OFF);
-}
-
-void after_examinating_all_rocks()
+void push_light_objects()
 {
-	ev3_speaker_play_tone(2000,3000);
-	cycle_print((char *) "odjebi naprej!");
-}
-
-void detect_rocks()
-{
-	if(ultrasonic_front < ULTRASONIC_FRONT_DISTANCE_ROCKS && ultrasonic_front != 0)
+	if(ultrasonic_front <= 20)
 	{
-		if(examined_rocks < NUMBER_OF_ROCKS)
+		/*while(!color_found(color_left) || color_left != COLOR_WHITE
+		|| !color_found(color_right) || color_right != COLOR_WHITE
+		|| !color_found(color_mid) || color_mid != COLOR_WHITE)
+		*/
+		char pom[20];
+		while(color_left != COLOR_WHITE) // || color_right != COLOR_WHITE)//&& color_right != COLOR_WHITE)
+		//if(color_mid != COLOR_WHITE || color_left != COLOR_WHITE || color_right != COLOR_WHITE)
 		{
-			moving(0,0);
-			ev3_motor_set_power(SMALL_ARM, -5);
-			dly_tsk(800);
-			ev3_motor_stop(SMALL_ARM,true);
-			dly_tsk(1200);
-			ev3_motor_set_power(SMALL_ARM, 5);
-			dly_tsk(800);
-
-			turn(random_turn_direction(), DRIVE_SPEED);
-
-			char pom[20];
-			sprintf(pom,"distance front %d\n", ultrasonic_front);
+			read_sensors(1);
+			sprintf(pom,"Color: %d\n", color_left);
 			cycle_print(pom);
-			examined_rocks ++;
+			moving(DRIVE_SPEED/3,DRIVE_SPEED/3);
+			ev3_led_set_color(LED_RED);
+			dly_tsk(500);
 		}
-		if(examined_rocks == NUMBER_OF_ROCKS)
+		/*
+		else
 		{
-			after_examinating_all_rocks();
-		}
+		*/
+			ev3_motor_stop(LEFT_P,true);
+			ev3_motor_stop(RIGHT_P,true);
+			ev3_led_set_color(LED_OFF);
+			dly_tsk(1000);
+			turn(random_turn_direction(),DRIVE_SPEED);
+		//}
+
 	}
 }
-
-
-
-

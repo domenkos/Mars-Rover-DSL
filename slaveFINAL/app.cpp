@@ -84,7 +84,7 @@ void btConnect() {
         sleep(1000);
     }
     cycle_print((char*)"Connected.");
-    act_tsk(BT_TASK);
+    //act_tsk(BT_TASK);
 }
 
 bool_t isConnected() {
@@ -168,8 +168,9 @@ void send_values()
 	if(!touch_left)
 		fprintf(bt_con,"0\n");
 	*/
-	char pom[10];
+	char pom[30];
 	sprintf(pom,"color %d\n",color_mid);
-	cycle_print(pom);
+	sprintf(pom,"Distance FRONT: %d\n",ultrasonic_front);
+	//cycle_print(pom);
 }
 

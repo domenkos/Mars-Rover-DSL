@@ -64,17 +64,24 @@ extern void detect_lakes();
 extern bool already_seen_color(colorid_t c);
 extern void examinate_lake();
 extern void get_values(char buffer[16]);
-extern void avoid_obsticles();
+extern void avoid_obstacles();
 extern void avoid_lakes();
 extern void back_task(intptr_t unused);
 extern void after_examinating_all_lakes();
+extern void after_examinating_all_rocks();
 extern bool color_found(colorid_t clr);
+extern bool avoid_color(colorid_t clr);
+extern void detect_rocks();
+extern bool color_found_avoid(colorid_t color);
+extern void push_obstacles();
 /**
  * Tasks
  */
 
 extern void	main_task(intptr_t);
 extern void bt_task(intptr_t);
+extern void stay_on_task(intptr_t unused);
+extern void back_ultra_task(intptr_t unused);
 
 #endif /* TOPPERS_MACRO_ONLY */
 
