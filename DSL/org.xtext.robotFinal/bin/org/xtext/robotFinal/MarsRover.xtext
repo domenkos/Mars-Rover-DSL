@@ -1,0 +1,98 @@
+grammar org.xtext.robotFinal.MarsRover with org.eclipse.xtext.common.Terminals
+
+generate marsRover "http://www.xtext.org/robotFinal/MarsRover"
+
+
+Robot:
+	'Robot'
+	name = STRING
+	'slave_address' slave_address = STRING
+	'drive_speed' drive_speed = INT
+	'special_speed' special_speed = INT
+  	'missions' missions += mission*
+;
+
+mission:
+	'mission'
+	name = STRING
+	'type' type = (avoid_obstacles | detect_lakes | avoid_lakes | push_obstacles | detect_rocks)
+;
+
+avoid_obstacles:
+	name = 'avoid_obstacles'
+	'sensors' sensors += (ultra | bumpers)*
+;
+
+ultra:
+	name = 'ultra'
+	'distance' distance = INT
+;
+
+bumpers:
+	name = 'bumpers'
+;
+
+
+detect_lakes:
+	name = 'detect_lakes'
+	'number_of_lakes' number_of_lakes = INT
+	'lakes_colors' lakes_colors += Color*
+	'after_examinating' after_examinating= after_action
+;
+
+detect_rocks:
+	name = 'detect_rocks'
+	'number_of_rocks' number_of_rocks = INT
+	'after_examinating' after_examinating= after_action
+;
+
+	push_obstacles:
+	name = 'push_obstacles'
+;
+
+after_action:
+	action = ('stop' | 'continue')
+	('indicate' indicate += indication*)?
+;
+
+indication:
+	name = 'with' 
+	type = (sound | message | color_indication)?
+;
+
+sound:
+	name = 'sound'
+	'duration' duration = INT
+	'frequency' frequency = INT
+;
+
+message:
+	name = 'message'
+	msg = STRING
+;
+
+color_indication:
+	name = 'color_indication'
+	'with_color' color = LED_Color
+;
+
+enum Color:
+	COLOR_RED = 'red' |
+	COLOR_BLUE = 'blue' |
+	COLOR_GREEN = 'green' |
+	COLOR_ORANGE = 'orange' |
+	COLOR_WHITE = 'white' |
+	COLOR_BLACK = 'black' |
+	COLOR_OFF = 'off'
+;
+
+enum LED_Color:
+	LED_ORANGE = 'orange' |
+	LED_RED = 'red' |
+	LED_GREEN = 'green' |
+	LED_OFF = 'off'
+;
+
+avoid_lakes:
+	name = 'avoid_lakes'
+;
