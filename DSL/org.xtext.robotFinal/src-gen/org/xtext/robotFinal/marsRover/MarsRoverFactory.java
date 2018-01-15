@@ -141,6 +141,15 @@ public interface MarsRoverFactory extends EFactory
   color_indication createcolor_indication();
 
   /**
+   * Returns a new object of class '<em>park</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>park</em>'.
+   * @generated
+   */
+  park createpark();
+
+  /**
    * Returns a new object of class '<em>avoid lakes</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

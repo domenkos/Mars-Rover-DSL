@@ -585,6 +585,34 @@ public interface MarsRoverPackage extends EPackage
   int COLOR_INDICATION_FEATURE_COUNT = 2;
 
   /**
+   * The meta object id for the '{@link org.xtext.robotFinal.marsRover.impl.parkImpl <em>park</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.xtext.robotFinal.marsRover.impl.parkImpl
+   * @see org.xtext.robotFinal.marsRover.impl.MarsRoverPackageImpl#getpark()
+   * @generated
+   */
+  int PARK = 13;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PARK__NAME = 0;
+
+  /**
+   * The number of structural features of the '<em>park</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PARK_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link org.xtext.robotFinal.marsRover.impl.avoid_lakesImpl <em>avoid lakes</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -592,7 +620,7 @@ public interface MarsRoverPackage extends EPackage
    * @see org.xtext.robotFinal.marsRover.impl.MarsRoverPackageImpl#getavoid_lakes()
    * @generated
    */
-  int AVOID_LAKES = 13;
+  int AVOID_LAKES = 14;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -620,7 +648,7 @@ public interface MarsRoverPackage extends EPackage
    * @see org.xtext.robotFinal.marsRover.impl.MarsRoverPackageImpl#getColor()
    * @generated
    */
-  int COLOR = 14;
+  int COLOR = 15;
 
   /**
    * The meta object id for the '{@link org.xtext.robotFinal.marsRover.LED_Color <em>LED Color</em>}' enum.
@@ -630,7 +658,7 @@ public interface MarsRoverPackage extends EPackage
    * @see org.xtext.robotFinal.marsRover.impl.MarsRoverPackageImpl#getLED_Color()
    * @generated
    */
-  int LED_COLOR = 15;
+  int LED_COLOR = 16;
 
 
   /**
@@ -1105,6 +1133,27 @@ public interface MarsRoverPackage extends EPackage
   EAttribute getcolor_indication_Color();
 
   /**
+   * Returns the meta object for class '{@link org.xtext.robotFinal.marsRover.park <em>park</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>park</em>'.
+   * @see org.xtext.robotFinal.marsRover.park
+   * @generated
+   */
+  EClass getpark();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.xtext.robotFinal.marsRover.park#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.xtext.robotFinal.marsRover.park#getName()
+   * @see #getpark()
+   * @generated
+   */
+  EAttribute getpark_Name();
+
+  /**
    * Returns the meta object for class '{@link org.xtext.robotFinal.marsRover.avoid_lakes <em>avoid lakes</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1545,6 +1594,24 @@ public interface MarsRoverPackage extends EPackage
      * @generated
      */
     EAttribute COLOR_INDICATION__COLOR = eINSTANCE.getcolor_indication_Color();
+
+    /**
+     * The meta object literal for the '{@link org.xtext.robotFinal.marsRover.impl.parkImpl <em>park</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.xtext.robotFinal.marsRover.impl.parkImpl
+     * @see org.xtext.robotFinal.marsRover.impl.MarsRoverPackageImpl#getpark()
+     * @generated
+     */
+    EClass PARK = eINSTANCE.getpark();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PARK__NAME = eINSTANCE.getpark_Name();
 
     /**
      * The meta object literal for the '{@link org.xtext.robotFinal.marsRover.impl.avoid_lakesImpl <em>avoid lakes</em>}' class.

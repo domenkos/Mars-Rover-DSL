@@ -80,6 +80,7 @@ public class MarsRoverParser extends AbstractContentAssistParser {
 					put(grammarAccess.getMessageAccess().getMsgAssignment_1(), "rule__Message__MsgAssignment_1");
 					put(grammarAccess.getColor_indicationAccess().getNameAssignment_0(), "rule__Color_indication__NameAssignment_0");
 					put(grammarAccess.getColor_indicationAccess().getColorAssignment_2(), "rule__Color_indication__ColorAssignment_2");
+					put(grammarAccess.getParkAccess().getNameAssignment(), "rule__Park__NameAssignment");
 					put(grammarAccess.getAvoid_lakesAccess().getNameAssignment(), "rule__Avoid_lakes__NameAssignment");
 				}
 			};

@@ -46,12 +46,12 @@ detect_rocks:
 	'after_examinating' after_examinating= after_action
 ;
 
-	push_obstacles:
+push_obstacles:
 	name = 'push_obstacles'
 ;
 
 after_action:
-	action = ('stop' | 'continue')
+	action = ('stop' | 'continue' | 'park')
 	('indicate' indicate += indication*)?
 ;
 
@@ -75,6 +75,11 @@ color_indication:
 	name = 'color_indication'
 	'with_color' color = LED_Color
 ;
+
+park:
+	name = 'park'
+;
+
 
 enum Color:
 	COLOR_RED = 'red' |

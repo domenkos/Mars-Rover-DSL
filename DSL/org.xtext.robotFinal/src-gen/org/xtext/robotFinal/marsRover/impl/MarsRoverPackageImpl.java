@@ -26,6 +26,7 @@ import org.xtext.robotFinal.marsRover.detect_rocks;
 import org.xtext.robotFinal.marsRover.indication;
 import org.xtext.robotFinal.marsRover.message;
 import org.xtext.robotFinal.marsRover.mission;
+import org.xtext.robotFinal.marsRover.park;
 import org.xtext.robotFinal.marsRover.push_obstacles;
 import org.xtext.robotFinal.marsRover.sound;
 import org.xtext.robotFinal.marsRover.ultra;
@@ -128,6 +129,13 @@ public class MarsRoverPackageImpl extends EPackageImpl implements MarsRoverPacka
    * @generated
    */
   private EClass color_indicationEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass parkEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -658,6 +666,26 @@ public class MarsRoverPackageImpl extends EPackageImpl implements MarsRoverPacka
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getpark()
+  {
+    return parkEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getpark_Name()
+  {
+    return (EAttribute)parkEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getavoid_lakes()
   {
     return avoid_lakesEClass;
@@ -780,6 +808,9 @@ public class MarsRoverPackageImpl extends EPackageImpl implements MarsRoverPacka
     createEAttribute(color_indicationEClass, COLOR_INDICATION__NAME);
     createEAttribute(color_indicationEClass, COLOR_INDICATION__COLOR);
 
+    parkEClass = createEClass(PARK);
+    createEAttribute(parkEClass, PARK__NAME);
+
     avoid_lakesEClass = createEClass(AVOID_LAKES);
     createEAttribute(avoid_lakesEClass, AVOID_LAKES__NAME);
 
@@ -875,6 +906,9 @@ public class MarsRoverPackageImpl extends EPackageImpl implements MarsRoverPacka
     initEClass(color_indicationEClass, color_indication.class, "color_indication", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getcolor_indication_Name(), ecorePackage.getEString(), "name", null, 0, 1, color_indication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getcolor_indication_Color(), this.getLED_Color(), "color", null, 0, 1, color_indication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(parkEClass, park.class, "park", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getpark_Name(), ecorePackage.getEString(), "name", null, 0, 1, park.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(avoid_lakesEClass, avoid_lakes.class, "avoid_lakes", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getavoid_lakes_Name(), ecorePackage.getEString(), "name", null, 0, 1, avoid_lakes.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

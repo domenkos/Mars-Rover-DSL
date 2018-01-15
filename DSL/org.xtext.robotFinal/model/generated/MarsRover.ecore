@@ -67,6 +67,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="#//LED_Color"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="park">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="Color">
     <eLiterals name="COLOR_RED" literal="red"/>
     <eLiterals name="COLOR_BLUE" value="1" literal="blue"/>

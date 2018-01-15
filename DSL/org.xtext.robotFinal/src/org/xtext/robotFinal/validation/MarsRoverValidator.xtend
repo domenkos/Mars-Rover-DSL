@@ -7,6 +7,7 @@ package org.xtext.robotFinal.validation
 import org.xtext.robotFinal.marsRover.Robot
 import org.xtext.robotFinal.marsRover.detect_lakes
 import org.xtext.robotFinal.marsRover.ultra
+import org.xtext.robotFinal.marsRover.detect_rocks
 import org.xtext.robotFinal.marsRover.color_indication
 import org.xtext.robotFinal.marsRover.Color
 
@@ -49,6 +50,37 @@ class MarsRoverValidator extends AbstractMarsRoverValidator {
 			error("Distance out of bounds [5, 255]", null);
 		}
 	}
+	
+	/*@Check
+	def checkStopContinue(Robot r){
+		var error_cnt = 0;
+		var error_cnt_reverse = 0;
+		for (var i = 0; i < r.missions.length; i++){
+			if ( MarsRoverGenerator.typeToText(r.missions.get(i).type ) == "detect_rocks"){
+				if ( (r.missions.get(i).type as detect_rocks).after_examinating.action == 'stop' ){
+					error_cnt = error_cnt + 1;
+				}
+			}
+			if ( MarsRoverGenerator.typeToText(r.missions.get(i).type ) == "detect_lakes"){
+				if ( (r.missions.get(i).type as detect_lakes).after_examinating.action == 'continue' ){
+					error_cnt = error_cnt + 1;
+				}
+			}
+			if ( MarsRoverGenerator.typeToText(r.missions.get(i).type ) == "detect_rocks"){
+				if ( (r.missions.get(i).type as detect_rocks).after_examinating.action == 'continue' ){
+					error_cnt_reverse = error_cnt_reverse + 1;
+				}
+			}
+			if ( MarsRoverGenerator.typeToText(r.missions.get(i).type ) == "detect_lakes"){
+				if ( (r.missions.get(i).type as detect_lakes).after_examinating.action == 'stop' ){
+					error_cnt_reverse = error_cnt_reverse + 1;
+				}
+			}
+		}
+		if (error_cnt == 2 || error_cnt_reverse == 2){
+			error("Cannot stop and continue at the same time", null);	
+		}
+	}*/
 	
 	@Check
 	def checkSameMissions(Robot r){

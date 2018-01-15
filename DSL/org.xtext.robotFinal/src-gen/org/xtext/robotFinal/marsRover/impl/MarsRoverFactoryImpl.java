@@ -79,6 +79,7 @@ public class MarsRoverFactoryImpl extends EFactoryImpl implements MarsRoverFacto
       case MarsRoverPackage.SOUND: return createsound();
       case MarsRoverPackage.MESSAGE: return createmessage();
       case MarsRoverPackage.COLOR_INDICATION: return createcolor_indication();
+      case MarsRoverPackage.PARK: return createpark();
       case MarsRoverPackage.AVOID_LAKES: return createavoid_lakes();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -264,6 +265,17 @@ public class MarsRoverFactoryImpl extends EFactoryImpl implements MarsRoverFacto
   {
     color_indicationImpl color_indication = new color_indicationImpl();
     return color_indication;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public park createpark()
+  {
+    parkImpl park = new parkImpl();
+    return park;
   }
 
   /**

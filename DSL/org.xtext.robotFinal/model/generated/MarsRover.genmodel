@@ -78,6 +78,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarsRover.ecore#//color_indication/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarsRover.ecore#//color_indication/color"/>
     </genClasses>
+    <genClasses ecoreClass="MarsRover.ecore#//park">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarsRover.ecore#//park/name"/>
+    </genClasses>
     <genClasses ecoreClass="MarsRover.ecore#//avoid_lakes">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarsRover.ecore#//avoid_lakes/name"/>
     </genClasses>

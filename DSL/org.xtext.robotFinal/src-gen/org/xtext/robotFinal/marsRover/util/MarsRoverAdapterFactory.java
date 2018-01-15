@@ -141,6 +141,11 @@ public class MarsRoverAdapterFactory extends AdapterFactoryImpl
         return createcolor_indicationAdapter();
       }
       @Override
+      public Adapter casepark(park object)
+      {
+        return createparkAdapter();
+      }
+      @Override
       public Adapter caseavoid_lakes(avoid_lakes object)
       {
         return createavoid_lakesAdapter();
@@ -358,6 +363,21 @@ public class MarsRoverAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createcolor_indicationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.xtext.robotFinal.marsRover.park <em>park</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.xtext.robotFinal.marsRover.park
+   * @generated
+   */
+  public Adapter createparkAdapter()
   {
     return null;
   }

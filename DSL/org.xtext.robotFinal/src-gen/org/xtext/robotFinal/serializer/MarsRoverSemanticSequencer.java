@@ -26,6 +26,7 @@ import org.xtext.robotFinal.marsRover.detect_rocks;
 import org.xtext.robotFinal.marsRover.indication;
 import org.xtext.robotFinal.marsRover.message;
 import org.xtext.robotFinal.marsRover.mission;
+import org.xtext.robotFinal.marsRover.park;
 import org.xtext.robotFinal.marsRover.push_obstacles;
 import org.xtext.robotFinal.marsRover.sound;
 import org.xtext.robotFinal.marsRover.ultra;
@@ -77,6 +78,9 @@ public class MarsRoverSemanticSequencer extends AbstractDelegatingSemanticSequen
 				return; 
 			case MarsRoverPackage.MISSION:
 				sequence_mission(context, (mission) semanticObject); 
+				return; 
+			case MarsRoverPackage.PARK:
+				sequence_park(context, (park) semanticObject); 
 				return; 
 			case MarsRoverPackage.PUSH_OBSTACLES:
 				sequence_push_obstacles(context, (push_obstacles) semanticObject); 
@@ -263,6 +267,24 @@ public class MarsRoverSemanticSequencer extends AbstractDelegatingSemanticSequen
 	 */
 	protected void sequence_mission(ISerializationContext context, mission semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     park returns park
+	 *
+	 * Constraint:
+	 *     name='park'
+	 */
+	protected void sequence_park(ISerializationContext context, park semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, MarsRoverPackage.Literals.PARK__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, MarsRoverPackage.Literals.PARK__NAME));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getParkAccess().getNameParkKeyword_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	

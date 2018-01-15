@@ -553,6 +553,21 @@ public class MarsRoverGrammarAccess extends AbstractGrammarElementFinder {
 		//LED_Color
 		public RuleCall getColorLED_ColorEnumRuleCall_2_0() { return cColorLED_ColorEnumRuleCall_2_0; }
 	}
+	public class ParkElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.xtext.robotFinal.MarsRover.park");
+		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
+		private final Keyword cNameParkKeyword_0 = (Keyword)cNameAssignment.eContents().get(0);
+		
+		//park:
+		//	name='park';
+		@Override public ParserRule getRule() { return rule; }
+		
+		//name='park'
+		public Assignment getNameAssignment() { return cNameAssignment; }
+		
+		//'park'
+		public Keyword getNameParkKeyword_0() { return cNameParkKeyword_0; }
+	}
 	public class Avoid_lakesElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.xtext.robotFinal.MarsRover.avoid_lakes");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
@@ -703,6 +718,7 @@ public class MarsRoverGrammarAccess extends AbstractGrammarElementFinder {
 	private final SoundElements pSound;
 	private final MessageElements pMessage;
 	private final Color_indicationElements pColor_indication;
+	private final ParkElements pPark;
 	private final ColorElements eColor;
 	private final LED_ColorElements eLED_Color;
 	private final Avoid_lakesElements pAvoid_lakes;
@@ -729,6 +745,7 @@ public class MarsRoverGrammarAccess extends AbstractGrammarElementFinder {
 		this.pSound = new SoundElements();
 		this.pMessage = new MessageElements();
 		this.pColor_indication = new Color_indicationElements();
+		this.pPark = new ParkElements();
 		this.eColor = new ColorElements();
 		this.eLED_Color = new LED_ColorElements();
 		this.pAvoid_lakes = new Avoid_lakesElements();
@@ -908,6 +925,16 @@ public class MarsRoverGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getColor_indicationRule() {
 		return getColor_indicationAccess().getRule();
+	}
+	
+	//park:
+	//	name='park';
+	public ParkElements getParkAccess() {
+		return pPark;
+	}
+	
+	public ParserRule getParkRule() {
+		return getParkAccess().getRule();
 	}
 	
 	//enum Color:
